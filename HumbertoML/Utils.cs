@@ -1,10 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace HumbertoML.Utility
 {
@@ -13,7 +8,7 @@ namespace HumbertoML.Utility
         public static float[] GetRandoms(int length)
         {
             var result = new float[length];
-            for(int i = 0; i < length; i++)
+            for (int i = 0; i < length; i++)
                 result[i] = Random.Shared.NextSingle() * 2 - 1;
             return result;
         }
@@ -82,6 +77,19 @@ namespace HumbertoML.Utility
                     return i;
 
             return -1;
+        }
+
+        public static float GenerateGaussian(Random rnd, float mean, float stdDev)
+        {
+            float u1 = 1f - rnd.NextSingle();
+            float u2 = 1f - rnd.NextSingle();
+            float randStdNormal = MathF.Sqrt(-2f * MathF.Log(u1)) * MathF.Sin(2f * MathF.PI * u2);
+            return mean + stdDev * randStdNormal;
+        }
+
+        public static float GenerateGaussian(float mean, float stdDev)
+        {
+            return GenerateGaussian(Random.Shared, mean, stdDev);
         }
     }
 }
