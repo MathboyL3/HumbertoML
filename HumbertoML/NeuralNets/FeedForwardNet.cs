@@ -2,13 +2,7 @@
 using HumbertoML.Interfaces;
 using HumbertoML.Layers;
 using HumbertoML.Training;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+using HumbertoML.WeightsInitializers;
 
 namespace HumbertoML.NeuralNets
 {
@@ -22,16 +16,16 @@ namespace HumbertoML.NeuralNets
 
         public FeedForwardNet() { }
 
-        public FeedForwardNet(int[] layerSizeConfiguration, IActivationDeactiviationFunction layerFunction = null, IActivationFunction resultsFunction = null)
+        public FeedForwardNet(int[] layerSizeConfiguration, IActivationDeactiviationFunction layerFunction = null, IActivationFunction resultsFunction = null, IWeightInitializer weightInitializer = null)
         {
             _configuration = layerSizeConfiguration;
 
             _activationFunction = resultsFunction;
-
+            
             _layers = new IFeedForwardLayer[layerSizeConfiguration.Length - 1];
 
             for (int i = 0; i < _layers.Length; i++)
-                _layers[i] = new FeedForwardLayer(layerSizeConfiguration[i], layerSizeConfiguration[i+1], layerFunction ?? new SigmoidFunction());
+                _layers[i] = new FeedForwardLayer(layerSizeConfiguration[i], layerSizeConfiguration[i + 1], layerFunction ?? new SigmoidFunction(), weightInitializer ?? new WIXavierNormal());
         }
 
         public float[] Feed(float[] args)
@@ -41,7 +35,7 @@ namespace HumbertoML.NeuralNets
 
             var layers = _layers.AsSpan();
 
-            for(int i = 0; i < layers.Length; i++)
+            for (int i = 0; i < layers.Length; i++)
                 argsCopy = layers[i].FeedFoward(argsCopy);
 
             _activationFunction?.ActivateT(argsCopy);
@@ -56,7 +50,7 @@ namespace HumbertoML.NeuralNets
 
         public void Mutate(float mutationPercentage, float mutationChance)
         {
-            foreach(var layer in _layers)
+            foreach (var layer in _layers)
                 ((IGeneticNNLayer)layer).Mutate(mutationPercentage, mutationChance);
         }
 
@@ -68,8 +62,8 @@ namespace HumbertoML.NeuralNets
             net._configuration = _configuration;
             net._activationFunction = _activationFunction;
             net._layers = new IFeedForwardLayer[_layers.Length];
-            
-            for(int i = 0; i < _layers.Length; i++)
+
+            for (int i = 0; i < _layers.Length; i++)
                 net._layers[i] = (IFeedForwardLayer)((IGeneticNNLayer)_layers[i]).Clone();
 
             return net;
@@ -94,13 +88,13 @@ namespace HumbertoML.NeuralNets
         public void TrainCompleteData(TrainingSet[] data, int iterations, float learningRate)
         {
 
-            List<(float[] data, float[] label)> labeledData = new (data.Select(x => x.Set.Length).Sum());
+            List<(float[] data, float[] label)> labeledData = new(data.Select(x => x.Set.Length).Sum());
 
-            foreach(var d in data)
+            foreach (var d in data)
                 foreach (var s in d.Set)
                     labeledData.Add((s, d.Label));
 
-            for(int i = 0; i < iterations; i++)
+            for (int i = 0; i < iterations; i++)
             {
                 labeledData = labeledData.OrderBy(x => Random.Shared.Next()).ToList();
                 //Console.WriteLine($"Iteration {i + 1}/{iterations}         \r");

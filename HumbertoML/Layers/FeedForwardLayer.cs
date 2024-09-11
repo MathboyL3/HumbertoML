@@ -1,87 +1,81 @@
 ﻿using HumbertoML.Interfaces;
-using HumbertoML.Utility;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HumbertoML.Layers
 {
     public struct FeedForwardLayer : IFeedForwardLayer, IGeneticNNLayer, IBackPropagateNNLayer
     {
-        public float[] _bias {  get; set; }
+        public float[] _bias { get; set; }
         public float[][] _weights { get; set; }
 
         public int _inputSize { get; set; }
         public int _outputSize { get; set; }
 
         public IActivationDeactiviationFunction _activationFunction { get; set; }
+        public IWeightInitializer _weightInitializer { get; set; }
 
         public FeedForwardLayer()
         {
 
         }
 
-        public FeedForwardLayer(int inputSize, int outputSize, IActivationDeactiviationFunction functions)
+        public FeedForwardLayer(int inputSize, int outputSize, IActivationDeactiviationFunction functions, IWeightInitializer weightInitializer)
         {
             _inputSize = inputSize;
             _outputSize = outputSize;
 
             _activationFunction = functions;
+            
+            _weightInitializer = weightInitializer;
 
             _bias = new float[outputSize];
-            //for (int i = 0; i < outputSize; i++)
-            //    _bias[i] = 0.1;
 
-            //_bias = Utils.GetRandoms(outputSize);
-
-            _weights = new float[outputSize][];
+            _weights = weightInitializer.GetWeights(inputSize, outputSize);
 
             //for(int i = 0; i < outputSize; i++)
             //    _weights[i] = Utils.GetRandoms(inputSize);
 
 
-            float variance = MathF.Sqrt(6.0f / (inputSize + outputSize));
+            //float variance = MathF.Sqrt(6.0f / (inputSize + outputSize));
 
-            for (int i = 0; i < outputSize; i++)
-            {
-                _weights[i] = new float[inputSize];
-                for (int j = 0; j < inputSize; j++)
-                {
-                    // Xavier initialization using a uniform distribution
-                    _weights[i][j] = (float)(Random.Shared.NextSingle() * 2 * variance - variance);
-                }
-            }
+            //for (int i = 0; i < outputSize; i++)
+            //{
+            //    _weights[i] = new float[inputSize];
+            //    for (int j = 0; j < inputSize; j++)
+            //    {
+            //        // Xavier initialization using a uniform distribution
+            //        _weights[i][j] = (float)(Random.Shared.NextSingle() * 2 * variance - variance);
+            //    }
+            //}
         }
 
 
         public float[] FeedFoward(float[] args)
         {
-            float[] result = new float[_outputSize];
 
             var iSize = _inputSize; // local caching
-            var weightsSpan = _weights.AsSpan(); // local caching
+            var oSize = _outputSize; // local caching
+            var weightsCache = _weights.AsSpan(); // local caching
+            var biasCache = _bias.AsSpan();
 
-            for (int i = 0; i < _outputSize; i++)
+            float[] result = new float[oSize];
+
+            for (int i = 0; i < oSize; i++)
             {
                 float r = 0;
-                var ws = weightsSpan[i].AsSpan(); // local caching
+                var ws = weightsCache[i].AsSpan(); // local caching
                 for (int k = 0; k < iSize; k++)
                     r += args[k] * ws[k];
 
-                result[i] = r + _bias[i];
+                result[i] = r + biasCache[i];
             }
 
-            _activationFunction.ActivateT(result);
+            _activationFunction?.ActivateT(result);
             return result;
         }
 
         public void Mutate(float mutationPercentage, float mutationChance)
         {
-            for(int i = 0; i < _bias.Length; i++)
+            for (int i = 0; i < _bias.Length; i++)
             {
                 var rnd = Random.Shared.NextSingle();
                 if (rnd >= mutationChance) continue;
@@ -104,7 +98,7 @@ namespace HumbertoML.Layers
                 }
             }
 
-            
+
         }
 
         public IGeneticNNLayer Clone()
@@ -114,7 +108,7 @@ namespace HumbertoML.Layers
             _bias.CopyTo(result._bias, 0);
 
             result._activationFunction = _activationFunction;
-            
+
             result._outputSize = _outputSize;
             result._inputSize = _inputSize;
 
@@ -139,11 +133,11 @@ namespace HumbertoML.Layers
             var inputSize = _inputSize;
             var outputSize = _outputSize;
 
-            var cacheBias = _bias.AsSpan();
-            var cacheWeights = _weights.AsSpan();
+            var cacheBias = _bias.AsSpan(); // Local caching
+            var cacheWeights = _weights.AsSpan(); // Local caching
 
             var hError = new float[inputSize];
-            
+
 
             for (int k = 0; k < outputSize; k++)
             {

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HumbertoML.Training
+﻿namespace HumbertoML.Training
 {
     public class TrainingSet
     {
@@ -14,7 +8,7 @@ namespace HumbertoML.Training
             Label = labels;
         }
 
-        public float[][] Set {  get; set; }
-        public float[] Label {  get; set; }
+        public float[][] Set { get; set; }
+        public float[] Label { get; set; }
     }
 }

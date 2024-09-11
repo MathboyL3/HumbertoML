@@ -1,9 +1,4 @@
 ﻿using HumbertoML.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HumbertoML.Training
 {
@@ -28,7 +23,8 @@ namespace HumbertoML.Training
         public Func<float[], float> _fitFunction { get; private set; }
         public Func<float, bool> _stopFunciton { get; private set; }
 
-        public GeneticTraining(int populationSize, int maxGenerations, float mutationAmount, float mutationChance) {
+        public GeneticTraining(int populationSize, int maxGenerations, float mutationAmount, float mutationChance)
+        {
             _populationSize = populationSize;
             _maxGenerations = maxGenerations;
             _mutationChance = mutationChance;
@@ -56,10 +52,10 @@ namespace HumbertoML.Training
         {
             _trainingSet = new();
 
-            for(int i = 0; i < trainingSet.Length; i++)
+            for (int i = 0; i < trainingSet.Length; i++)
             {
                 var set = trainingSet[i];
-                foreach(var s in set.Set)
+                foreach (var s in set.Set)
                     _trainingSet.Add((set.Label, s));
             }
 
@@ -68,13 +64,13 @@ namespace HumbertoML.Training
             _totalBatches = (int)Math.Floor(_trainingSetSize * _trainingBatchPercentage);
             return this;
         }
-               
+
         public IGeneticTraining<T> SetConfiguration(params object[] parameters)
         {
             _defaultNNParameters = parameters;
             return this;
         }
-               
+
         public IGeneticTraining<T> DefineFitFunction(Func<float[], float> func)
         {
             _fitFunction = func;
@@ -104,7 +100,7 @@ namespace HumbertoML.Training
             for (int i = 0; i < _maxGenerations; i++)
             {
                 Console.WriteLine($"Treinando Gen: {i + 1}/{_maxGenerations}... ");
-                
+
                 scores = TrainIteration();
 
                 for (int k = 0; k < scores.Length; k++)
@@ -144,7 +140,7 @@ namespace HumbertoML.Training
             {
                 var set = _trainingSet[setIndexes[i]];
 
-                Console.Write($"Batches {i+1}/{_totalBatches}\r");
+                Console.Write($"Batches {i + 1}/{_totalBatches}\r");
 
                 Parallel.For(0, popSize, k =>
                 {
@@ -173,7 +169,7 @@ namespace HumbertoML.Training
         {
             float[] error = new float[expected.Length];
 
-            for(int i = 0; i < expected.Length; i++)
+            for (int i = 0; i < expected.Length; i++)
                 error[i] = Math.Abs(data[i] - expected[i]);
 
             return error;
