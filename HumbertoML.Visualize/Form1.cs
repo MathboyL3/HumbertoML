@@ -1,6 +1,9 @@
+using HumbertoML.ActivationFunctions;
+using HumbertoML.Interfaces;
 using HumbertoML.NeuralNets;
-using HumbertoML.Utility;
 using HumbertoML.Training;
+using HumbertoML.Utility;
+using HumbertoML.WeightsInitializers;
 namespace HumbertoML.Visualize
 {
     public partial class Form1 : Form
@@ -17,6 +20,12 @@ namespace HumbertoML.Visualize
         private float _errorThreshold = 0.02f;
 
         private float _learningRate = 0.05f;
+
+        private IActivationDeactiviationFunction _activationFunction;
+        private Dictionary<string, IActivationDeactiviationFunction> _possibleActivationFunction;
+
+        private IWeightInitializer _weightsInitializer;
+        private Dictionary<string, IWeightInitializer> _possibleWeightsInitializers;
 
         private int[] _config;
 
@@ -48,6 +57,33 @@ namespace HumbertoML.Visualize
             InitializeComponent();
 
             _dataPoints = new();
+
+            _activationFunction = Functions.Sigmoid;
+
+            _possibleActivationFunction = new()
+            {
+                ["Sigmoid"] = Functions.Sigmoid,
+                ["TanH"] = Functions.Tanh,
+                ["ReLU"] = Functions.ReLU,
+                ["LeakyReLU"] = Functions.LeakyReLU,
+                ["SoftPlus"] = Functions.SoftPlus,
+                ["Linear"] = Functions.Linear,
+            };
+
+            _weightsInitializer = WInitializers.WIXavierUniform;
+
+            _possibleWeightsInitializers = new()
+            {
+                ["Xavier (Normal)"] = WInitializers.WIXavierNormal,
+                ["Xavier (Uniform)"] = WInitializers.WIXavierUniform,
+                ["Kaiming (Normal)"] = WInitializers.WIKaimingNormal,
+                ["Kaiming (Uniform)"] = WInitializers.WIKaimingUniform,
+                ["Gaussian (m 0, sdtDev 1)"] = WInitializers.WIGaussianDistributed,
+                ["Random (0 to 1)"] = WInitializers.WIPositiveRandom01,
+                ["Random (-1 to 1)"] = WInitializers.WINPRandom11,
+                ["Random (0 to 5)"] = WInitializers.WIPositiveRandom05,
+                ["Random (-5 to 5)"] = WInitializers.WINPRandom55,
+            };
 
             _nudsLayerConfig =
             [
@@ -123,7 +159,9 @@ namespace HumbertoML.Visualize
         {
             ResetText();
             UpdateConfigParameters();
-            _nn = new FeedForwardNet(_config, ActivationFunctions.Functions.Sigmoid, ActivationFunctions.Functions.SoftMax);
+            var acFunction = Activator.CreateInstance(_activationFunction.GetType());
+            var wInit = Activator.CreateInstance(_weightsInitializer.GetType());
+            _nn = new FeedForwardNet(_config, (IActivationDeactiviationFunction)acFunction, ActivationFunctions.Functions.SoftMax, (IWeightInitializer)wInit);
             _isNNInvalid = false;
             _totalTrainedIteration = 0;
             _shouldStopTrainning = false;
@@ -449,6 +487,20 @@ namespace HumbertoML.Visualize
 
         private void OnForm_Load(object sender, EventArgs e)
         {
+            cb_functions.Items.Clear();
+
+            foreach (var val in _possibleActivationFunction)
+                cb_functions.Items.Add(val.Key);
+
+            cb_functions.SelectedIndex = 0;
+
+            cb_weights.Items.Clear();
+
+            foreach (var val in _possibleWeightsInitializers)
+                cb_weights.Items.Add(val.Key);
+
+            cb_weights.SelectedIndex = 0;
+
             InvalidateNN();
             UpdateConfigVisuals();
             ClearGraph();
@@ -533,7 +585,7 @@ namespace HumbertoML.Visualize
             ClearGraph();
         }
 
-        
+
         private void OnRemoveLayer_Click(object sender, EventArgs e)
         {
             for (int i = _nudsLayerConfig.Count - 1; i >= 0; i--)
@@ -671,7 +723,7 @@ namespace HumbertoML.Visualize
             }
 
         }
-        
+
         private void OnResetNN_Click(object sender, EventArgs e)
         {
             if (ShowError())
@@ -680,7 +732,7 @@ namespace HumbertoML.Visualize
             Invalidate();
             CreateNewValidNN();
         }
-        
+
         private void OnUpdateAfterIterations_Changed(object sender, EventArgs e)
         {
             _updateAfterIterations = (int)((NumericUpDown)sender).Value;
@@ -721,5 +773,17 @@ namespace HumbertoML.Visualize
         }
 
         #endregion Events
+
+        private void OnActivationFunction_Changed(object sender, EventArgs e)
+        {
+            _activationFunction = _possibleActivationFunction[((ComboBox)sender).SelectedItem.ToString()];
+            InvalidateNN();
+        }
+
+        private void OnWeightsInitializer_Changed(object sender, EventArgs e)
+        {
+            _weightsInitializer = _possibleWeightsInitializers[((ComboBox)sender).SelectedItem.ToString()];
+            InvalidateNN();
+        }
     }
 }

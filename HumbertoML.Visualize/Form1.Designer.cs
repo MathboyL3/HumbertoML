@@ -79,6 +79,10 @@
             ch_useSin = new CheckBox();
             numericUpDown1 = new NumericUpDown();
             label4 = new Label();
+            cb_functions = new ComboBox();
+            label5 = new Label();
+            cb_weights = new ComboBox();
+            label6 = new Label();
             ((System.ComponentModel.ISupportInitialize)nud_updateRate).BeginInit();
             ((System.ComponentModel.ISupportInitialize)nud_maxIterations).BeginInit();
             ((System.ComponentModel.ISupportInitialize)nud_minError).BeginInit();
@@ -112,7 +116,7 @@
             // 
             // nud_maxIterations
             // 
-            nud_maxIterations.Location = new Point(114, 712);
+            nud_maxIterations.Location = new Point(21, 715);
             nud_maxIterations.Maximum = new decimal(new int[] { 1000000000, 0, 0, 0 });
             nud_maxIterations.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
             nud_maxIterations.Name = "nud_maxIterations";
@@ -126,7 +130,7 @@
             // 
             nud_minError.DecimalPlaces = 2;
             nud_minError.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
-            nud_minError.Location = new Point(114, 679);
+            nud_minError.Location = new Point(21, 682);
             nud_minError.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
             nud_minError.Name = "nud_minError";
             nud_minError.Size = new Size(88, 27);
@@ -155,7 +159,7 @@
             btn_resetNN.IconColor = Color.Black;
             btn_resetNN.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btn_resetNN.IconSize = 25;
-            btn_resetNN.Location = new Point(21, 638);
+            btn_resetNN.Location = new Point(409, 638);
             btn_resetNN.Name = "btn_resetNN";
             btn_resetNN.Size = new Size(45, 32);
             btn_resetNN.TabIndex = 13;
@@ -627,9 +631,9 @@
             // 
             // btn_StartTrain
             // 
-            btn_StartTrain.Location = new Point(556, 634);
+            btn_StartTrain.Location = new Point(464, 635);
             btn_StartTrain.Name = "btn_StartTrain";
-            btn_StartTrain.Size = new Size(120, 36);
+            btn_StartTrain.Size = new Size(103, 36);
             btn_StartTrain.TabIndex = 9;
             btn_StartTrain.Text = "Train";
             btn_StartTrain.UseVisualStyleBackColor = true;
@@ -669,9 +673,9 @@
             // btn_StopTrain
             // 
             btn_StopTrain.Enabled = false;
-            btn_StopTrain.Location = new Point(556, 676);
+            btn_StopTrain.Location = new Point(573, 636);
             btn_StopTrain.Name = "btn_StopTrain";
-            btn_StopTrain.Size = new Size(120, 36);
+            btn_StopTrain.Size = new Size(103, 36);
             btn_StopTrain.TabIndex = 9;
             btn_StopTrain.Text = "Stop";
             btn_StopTrain.UseVisualStyleBackColor = true;
@@ -680,7 +684,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(208, 714);
+            label2.Location = new Point(115, 717);
             label2.Name = "label2";
             label2.Size = new Size(103, 20);
             label2.TabIndex = 12;
@@ -689,7 +693,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(208, 648);
+            label3.Location = new Point(115, 651);
             label3.Name = "label3";
             label3.Size = new Size(149, 20);
             label3.TabIndex = 12;
@@ -698,7 +702,7 @@
             // ch_useCos
             // 
             ch_useCos.AutoSize = true;
-            ch_useCos.Location = new Point(424, 646);
+            ch_useCos.Location = new Point(268, 649);
             ch_useCos.Name = "ch_useCos";
             ch_useCos.Size = new Size(119, 24);
             ch_useCos.TabIndex = 14;
@@ -709,7 +713,7 @@
             // ch_useAtan2
             // 
             ch_useAtan2.AutoSize = true;
-            ch_useAtan2.Location = new Point(424, 713);
+            ch_useAtan2.Location = new Point(268, 716);
             ch_useAtan2.Name = "ch_useAtan2";
             ch_useAtan2.Size = new Size(103, 24);
             ch_useAtan2.TabIndex = 14;
@@ -720,7 +724,7 @@
             // ch_useSin
             // 
             ch_useSin.AutoSize = true;
-            ch_useSin.Location = new Point(424, 680);
+            ch_useSin.Location = new Point(268, 683);
             ch_useSin.Name = "ch_useSin";
             ch_useSin.Size = new Size(97, 24);
             ch_useSin.TabIndex = 14;
@@ -732,7 +736,7 @@
             // 
             numericUpDown1.DecimalPlaces = 2;
             numericUpDown1.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
-            numericUpDown1.Location = new Point(114, 646);
+            numericUpDown1.Location = new Point(21, 649);
             numericUpDown1.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
             numericUpDown1.Name = "numericUpDown1";
             numericUpDown1.Size = new Size(88, 27);
@@ -743,23 +747,63 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(208, 681);
+            label4.Location = new Point(115, 684);
             label4.Name = "label4";
             label4.Size = new Size(138, 20);
             label4.TabIndex = 12;
             label4.Text = "Erro Mínimo Aceito";
+            // 
+            // cb_functions
+            // 
+            cb_functions.FormattingEnabled = true;
+            cb_functions.Location = new Point(396, 717);
+            cb_functions.Name = "cb_functions";
+            cb_functions.Size = new Size(138, 28);
+            cb_functions.TabIndex = 15;
+            cb_functions.SelectedIndexChanged += OnActivationFunction_Changed;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new Point(536, 722);
+            label5.Name = "label5";
+            label5.Size = new Size(136, 20);
+            label5.TabIndex = 12;
+            label5.Text = "Activation Function";
+            // 
+            // comboBox1
+            // 
+            cb_weights.FormattingEnabled = true;
+            cb_weights.Location = new Point(396, 681);
+            cb_weights.Name = "comboBox1";
+            cb_weights.Size = new Size(138, 28);
+            cb_weights.TabIndex = 16;
+            cb_weights.SelectedIndexChanged += OnWeightsInitializer_Changed;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(540, 687);
+            label6.Name = "label6";
+            label6.Size = new Size(45, 20);
+            label6.TabIndex = 17;
+            label6.Text = "Pesos";
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1390, 753);
+            Controls.Add(label6);
+            Controls.Add(cb_weights);
+            Controls.Add(cb_functions);
             Controls.Add(ch_useSin);
             Controls.Add(ch_useAtan2);
             Controls.Add(ch_useCos);
             Controls.Add(btn_resetNN);
             Controls.Add(label4);
             Controls.Add(label3);
+            Controls.Add(label5);
             Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(label_Iteration);
@@ -867,6 +911,10 @@
         private CheckBox ch_useSin;
         private NumericUpDown numericUpDown1;
         private Label label4;
+        private ComboBox cb_functions;
+        private Label label5;
+        private ComboBox cb_weights;
+        private Label label6;
     }
 
 
