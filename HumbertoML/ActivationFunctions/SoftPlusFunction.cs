@@ -2,15 +2,16 @@
 
 namespace HumbertoML.ActivationFunctions
 {
-    public class ReLUFunction : BaseAcDcFunction, IActivationFunction, IDeactivationFunction, IActivationDeactiviationFunction
+    public class SoftPlusFunction : BaseAcDcFunction, IActivationDeactiviationFunction
     {
         public override float Activate(float val)
         {
-            return Math.Max(0, val);
+            return MathF.Log(1 + MathF.Exp(val), MathF.E);
         }
+
         public override float Deactivate(float val)
         {
-            return val < 0 ? 0 : 1;
+            return 1 / 1 + MathF.Exp(-val);
         }
     }
 }

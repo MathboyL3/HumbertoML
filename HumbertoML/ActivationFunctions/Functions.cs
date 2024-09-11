@@ -1,11 +1,4 @@
-﻿using HumbertoML.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HumbertoML.ActivationFunctions
+﻿namespace HumbertoML.ActivationFunctions
 {
     public static class Functions
     {
@@ -13,6 +6,8 @@ namespace HumbertoML.ActivationFunctions
         public static readonly ReLUFunction ReLU = new ReLUFunction();
         public static readonly SigmoidFunction Sigmoid = new SigmoidFunction();
         public static readonly SoftMaxFunction SoftMax = new SoftMaxFunction();
-        public static readonly TanHFucntion TanhFucntion = new TanHFucntion();
+        public static readonly TanHFucntion Tanh = new TanHFucntion();
+        public static readonly LinearFunction Linear = new LinearFunction();
+        public static readonly SoftPlusFunction SoftPlus = new SoftPlusFunction();
     }
 }
